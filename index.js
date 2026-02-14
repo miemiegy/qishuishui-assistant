@@ -37,7 +37,7 @@ log("--- 进入主循环 ---");
 
 while (true) {
     // 直接找“继续领”按钮，把它当作广告入口
-    var startBtn = textContains("继续领").findOne(3000);
+    var startBtn = textContains("继续领").findOne(3000) || textContains("领时长").findOne(3000);
     
     if (startBtn) {
         log("发现'继续领'，点击开始看广告");
@@ -115,6 +115,6 @@ function waitAndCloseAd() {
         // 如果没有“领取奖励”，也没“坚持退出”，说明已经自动回到了主页
         // 跳出循环
         log("广告流程结束");
-        break; 
+     
     }
 }
