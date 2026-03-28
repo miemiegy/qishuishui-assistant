@@ -80,7 +80,15 @@ function waitAndCloseAd() {
     while (true) {
         log(">>> 广告播放中 (等待35秒) <<<");
         sleep(35000); 
-        
+     
+        var zhiboBtn = textContains("更多直播").findOne(3000) 
+      
+        if(zhiboBtn){
+          log("发现'更多直播'，点击退出");
+   
+          click(device.width * 0.92, device.height * 0.065);
+        }
+       
         // --- 关闭广告 ---
         var feedbackBtn = text("反馈").findOne(2000);
         if (feedbackBtn) {
@@ -110,6 +118,7 @@ function waitAndCloseAd() {
             log("点击'坚持退出'");
             click(exitBtn.bounds().centerX(), exitBtn.bounds().centerY());
             sleep(2000);
+          	break;
         }
         
         // 如果没有“领取奖励”，也没“坚持退出”，说明已经自动回到了主页
