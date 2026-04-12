@@ -1,0 +1,47 @@
+{
+  "skill_name": "hamibot",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "basic-click-by-text",
+      "prompt": "帮我写一个 Hamibot 脚本，点击屏幕上文字是'确定'的按钮",
+      "expected_output": "使用 text('确定').findOne().click() 或类似方法的完整脚本",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "eval_name": "ad-auto-watch",
+      "prompt": "我想写一个自动刷汽水音乐广告的脚本，需要：1.找到'继续领'按钮 2.点击后等待35秒 3.关闭广告 4.处理连续广告",
+      "expected_output": "完整的广告自动观看脚本，包含循环、等待、关闭逻辑",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "eval_name": "ocr-recognition",
+      "prompt": "如何在 Hamibot 中截图并识别图片中的文字？",
+      "expected_output": "使用 images.captureScreen() 和 ocr.recognize() 的代码示例",
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "eval_name": "relative-coordinates",
+      "prompt": "怎么点击屏幕右上角，要能适应不同手机分辨率",
+      "expected_output": "使用 device.width 和 device.height 计算相对坐标的代码",
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "eval_name": "file-operations",
+      "prompt": "如何在 Hamibot 中读取/sdcard/test.txt文件内容？",
+      "expected_output": "使用 files.read() 的正确代码示例",
+      "assertions": []
+    },
+    {
+      "id": 6,
+      "eval_name": "http-request",
+      "prompt": "帮我写一个 POST JSON 数据到 http://api.example.com/data 的请求",
+      "expected_output": "使用 http.postJson() 的完整代码",
+      "assertions": []
+    }
+  ]
+}
