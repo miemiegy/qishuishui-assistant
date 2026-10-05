@@ -122,12 +122,23 @@ function waitAndCloseAd() {
         log(">>> 广告播放中 (等待35秒) <<<");
         sleep(35000);
 
-        var zhiboBtn = textContains("更多直播").findOne(3000)
+        var zhiboBtn = textContains("更多直播").findOnce();
+        if (zhiboBtn) {
+            log("发现'更多直播'，开始退出直播间...");
+            // 循环退出，最多尝试 3 次，防止被优惠券/购物车等弹窗拦截点击
+            for (var i = 0; i < 3; i++) {
+                click(device.width * 0.92, device.height * 0.065);
+                sleep(600);
 
-        if(zhiboBtn){
-          log("发现'更多直播'，点击退出");
-
-          click(device.width * 0.92, device.height * 0.065);
+                if (textContains("更多直播").exists()) {
+                    log("仍处于直播间(可能被领券弹窗拦截)，按返回键协助退出");
+                    back();
+                    sleep(600);
+                } else {
+                    log("已成功退出直播间");
+                    break;
+                }
+            }
         }
 
         // --- 关闭广告 ---
