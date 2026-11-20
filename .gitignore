@@ -7,3 +7,9 @@ window_dump.xml
 TODO.md
 apifox-reports/
 skills-lock.json
+
+# 本地环境变量配置文件（敏感私密凭证）
+.env
+.env.local
+.env.*.local
+
