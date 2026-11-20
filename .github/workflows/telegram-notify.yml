@@ -1,29 +1,29 @@
 name: Telegram Notification
 
 # =====================================================================
-# GitHub 更新自动推送至 Telegram 群工作流
+# GitHub 更新指定推送至 Telegram 群工作流
+# 触发机制：
+# 1. 发布正式 Release 时自动推送版本卡片
+# 2. 在 GitHub Actions 页面手动点击「Run workflow」指定推送
+# (已取消合并 master 自动推送，避免日常代码提交打扰群友)
 # =====================================================================
 
 on:
-  # 1. 当在 GitHub 发布新 Release 时自动触发推送（推荐发版方式）
+  # 1. 当在 GitHub 发布新 Release 时自动触发推送（发版推荐）
   release:
     types: [published]
 
-  # 2. 当有代码 Push 到 master 主分支时自动触发简要推送
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-
-  # 3. 支持在 GitHub Actions 页面手动点击触发（方便随时测试连通性）
+  # 2. 支持在 GitHub Actions 页面手动指定推送
   workflow_dispatch:
     inputs:
-      test_message:
-        description: '测试消息内容'
+      title:
+        description: '通知标题'
         required: false
-        default: '这是一条来自 GitHub Actions 的连通性测试消息！'
+        default: '【汽水水助手】版本更新通知'
+      message:
+        description: '通知正文内容'
+        required: true
+        default: '汽水水助手已发布最新更新，欢迎体验！'
 
 jobs:
   telegram-notify:
@@ -57,20 +57,15 @@ jobs:
             fi
             MSG+="🔗 <a href='${URL}'>点击直达 GitHub Release 页面</a>"
 
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            MSG="🔔 <b>【汽水水助手】Telegram 机器人连通性测试</b>%0A%0A"
-            MSG+="🎉 恭喜！GitHub Actions 与 Telegram 机器人已成功连通！%0A"
-            MSG+="💬 测试内容：${{ github.event.inputs.test_message }}%0A%0A"
-            MSG+="🔗 <a href='${{ github.server_url }}/${{ github.repository }}'>项目仓库主页</a>"
-
           else
-            COMMIT_MSG="${{ github.event.head_commit.message }}"
-            COMMIT_URL="${{ github.event.head_commit.url }}"
-            
-            MSG="📢 <b>【汽水水助手】代码库更新推送</b>%0A%0A"
-            MSG+="📝 <b>提交信息</b>：%0A<code>${COMMIT_MSG}</code>%0A%0A"
-            MSG+="👤 <b>提交者</b>：${{ github.actor }}%0A"
-            MSG+="🔗 <a href='${COMMIT_URL}'>查看本次 Commit 变更</a>"
+            # workflow_dispatch 手动指定推送
+            TITLE="${{ github.event.inputs.title }}"
+            CONTENT="${{ github.event.inputs.message }}"
+
+            MSG="📢 <b>${TITLE}</b>%0A%0A"
+            MSG+="📝 <b>通知内容</b>：%0A${CONTENT}%0A%0A"
+            MSG+="👤 <b>操作者</b>：${{ github.actor }}%0A"
+            MSG+="🔗 <a href='${{ github.server_url }}/${{ github.repository }}'>项目仓库主页</a>"
           fi
 
           # 3. 调用 Telegram Bot API 发送消息 (采用 HTML 模式，杜绝字符转义报错)

@@ -1,0 +1,295 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Telegram Bot API",
+    "description": "Telegram 机器人服务接口自动化套件，用于验证机器人连接性、拉取群组 Updates 以及下发通知消息。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.telegram.org",
+      "description": "Telegram 官方 API 服务器"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Bot 管理",
+      "description": "Bot 基本信息与心跳探测"
+    },
+    {
+      "name": "消息与更新",
+      "description": "群组消息拉取与通知下发"
+    }
+  ],
+  "paths": {
+    "/bot{token}/getMe": {
+      "get": {
+        "tags": ["Bot 管理"],
+        "summary": "获取 Bot 自身信息 (心跳探活)",
+        "description": "验证 Bot Token 是否有效，并返回机器人的基本配置与权限状态。",
+        "operationId": "getMe",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "从 BotFather 获取的机器人 API Token",
+            "schema": {
+              "type": "string",
+              "example": "123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回机器人信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bot{token}/getUpdates": {
+      "get": {
+        "tags": ["消息与更新"],
+        "summary": "获取最新更新 (提取群组 Chat ID)",
+        "description": "从 Telegram 服务器长轮询或读取未决事件，获取机器人加入的群组 ID 与最新会话。",
+        "operationId": "getUpdates",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "机器人 API Token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "下一个返回事件的标识符",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "每次拉取返回的最大条数 (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回更新列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUpdatesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bot{token}/sendMessage": {
+      "post": {
+        "tags": ["消息与更新"],
+        "summary": "发送通知消息到群组或个人",
+        "description": "向指定 Chat ID 发送文本消息，支持 HTML 或 Markdown 格式格式化。",
+        "operationId": "sendMessage",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "机器人 API Token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "消息发送成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendMessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GetMeResponse": {
+        "type": "object",
+        "required": ["ok", "result"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 7761000000
+              },
+              "is_bot": {
+                "type": "boolean",
+                "example": true
+              },
+              "first_name": {
+                "type": "string",
+                "example": "qishuishui"
+              },
+              "username": {
+                "type": "string",
+                "example": "qishuishui_helper_bot"
+              },
+              "can_join_groups": {
+                "type": "boolean",
+                "example": true
+              },
+              "can_read_all_group_messages": {
+                "type": "boolean",
+                "example": false
+              },
+              "supports_inline_queries": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          }
+        }
+      },
+      "GetUpdatesResponse": {
+        "type": "object",
+        "required": ["ok", "result"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "update_id": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message_id": {
+                      "type": "integer"
+                    },
+                    "chat": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": -1001234567890
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "汽水水交流群"
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "supergroup"
+                        }
+                      }
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "required": ["chat_id", "text"],
+        "properties": {
+          "chat_id": {
+            "type": "string",
+            "description": "目标会话 ID（群组 ID 通常以 -100 开头）",
+            "example": "-1001234567890"
+          },
+          "text": {
+            "type": "string",
+            "description": "要发送的消息文本内容",
+            "example": "🚀 汽水音乐自动化测试通知：CI 运行成功！"
+          },
+          "parse_mode": {
+            "type": "string",
+            "description": "文本解析模式",
+            "enum": ["HTML", "MarkdownV2", "Markdown"],
+            "default": "HTML"
+          },
+          "disable_web_page_preview": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "SendMessageResponse": {
+        "type": "object",
+        "required": ["ok", "result"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "message_id": {
+                "type": "integer"
+              },
+              "date": {
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
